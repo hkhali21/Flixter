@@ -1,22 +1,40 @@
 package com.example.flixter.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.drawable.Drawable;
+import android.os.Parcel;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.load.resource.bitmap.CenterInside;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
+import com.example.flixter.DetailActivity;
 import com.example.flixter.R;
 import com.example.flixter.models.Movie;
 
+import org.parceler.Parcels;
+
 import java.util.List;
+
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 // extend this class and right click and implement the 3 methods
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
@@ -69,6 +87,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
     // create a constructor for it by right clicking it
     // ViewHolder is representation of row in view
     public class ViewHolder extends RecyclerView.ViewHolder {
+        // Reference to relative layout
+        RelativeLayout container;
+
         // member var for each view in viewHolder
         TextView tvTitle;
         TextView tvOverview;
@@ -80,6 +101,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
             tvTitle = itemView.findViewById(R.id.tvTitle);
             tvOverview = itemView.findViewById(R.id.tvOverview);
             ivPoster = itemView.findViewById(R.id.ivPoster);
+            // Reference to container
+            container = itemView.findViewById(R.id.container);
+
         }
 
         public void bind(Movie movie) {
@@ -98,7 +122,46 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
                 // else imageUrl = poster image
                 imageUrl = movie.getPosterPath();
             }
-            Glide.with(context).load(imageUrl).into(ivPoster);
+            // Glide to load image and make image corners rounded
+            Glide.with(context).load(imageUrl).transform(new CenterInside(), new RoundedCorners(24)).into(ivPoster);
+
+
+
+            // 1. Register click listener on the whole row(container)
+            // Reference to RelativeLayout.
+            // for this get reference to container element which contains image etc
+            // thats in itemmoviexml
+
+
+            container.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // 2. Navigate to a new activity on tap , use intent to navigate
+                    // to detail movie.
+                    // register a clicklistner when we want to navigate new activity(detailActivity)
+
+                    // intent to move to detail activity
+                    Intent i = new Intent(context, DetailActivity.class);
+
+                    // Display relevant data for the movie
+                    //i.putExtra("title", movie.getTitle());
+
+                    // pull out whole movie object from intent bundle
+                    // make movie class into parceleable type because our movie
+                    // is not primitive like int, short etc. so we use parcel data type
+                    // for this purpose
+                    i.putExtra("movie", Parcels.wrap(movie));
+
+                    // start activty is method on context object
+                    context.startActivity(i);
+
+                    // for debugging use toast when you click on movie title
+                    // a toaster shows up at bottom with movie name
+                    //Toast.makeText(context, movie.getTitle(), Toast.LENGTH_SHORT).show();
+
+
+                }
+            });
         }
     }
 
