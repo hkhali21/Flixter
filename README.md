@@ -19,9 +19,13 @@
 
 ### App Walkthough GIF
 
+### Portrait Mode
+
+<img src="walkthroughpart2.gif" width=250><br>
+
+### Landscope Mode
 
 <img src="part2landscape.gif" width=250><br>
-<img src="walkthroughpart2.gif" width=250><br>
 
 ### Notes
 
